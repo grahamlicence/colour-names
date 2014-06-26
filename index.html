@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+    <title></title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <style type="text/css">
+        * {box-sizing: border-box;}
+        body, html {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        main {
+            background: #affec7;
+            transition: background 0.5s;
+            padding: 1em;
+            height: 100%;
+        }
+        input {
+            padding: 10px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+            border: solid 1px #07061F;
+            margin-bottom: 1em;
+        }
+        .your-colour {
+            font-family: monospace;
+            margin: 0 0 1em;
+        } 
+        .about {
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0.1em 0.5em 0.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <p class="your-colour">Your colour: <span>#affec7</span></p>
+        <input type="text" />
+
+        <section class="about">
+            <h1>Colour names</h1>
+            <p>Type your name into the above box to give your name as a hex colour value.</p>
+            <p>Three and six character names work best (for obvious reasons), with other lengths shorterned or having no #affec7.</p>
+            <p>And yes, colour is a correct spelling.</p>
+        </section>
+    </main> 
+
+    <a href="https://github.com/grahamlicence/colour-names"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+
+    <script>
+        var input = document.querySelectorAll('input'),
+            main = document.querySelectorAll('main'),
+            output = document.querySelectorAll('span');
+
+        // check if word is 3 or 6 letters
+        function checkLength (word) {
+            if (word.length === 3 || word.length === 6) {
+                return true;
+            }
+            return false;
+        }
+
+        // returns a 3 or 6 letter length word
+        function shorten (word) {
+            var ln;
+            if (checkLength(word)) {
+                return word;
+            } 
+            // remove not so translatable letters, eg r for 2, ll for l
+            word = word.replace('ll', 'l').replace('r', '');
+            if (checkLength(word)) {
+                return word;
+            }
+            // and again why not
+            word = word.replace('u', '');
+            if (checkLength(word)) {
+                return word;
+            }
+            // otherwise trim the last letters
+            ln = word.length;
+            if (ln < 3) {
+                return 'affec7';
+            } else if (ln < 6) {
+                return word.slice(0, (3 - ln));
+            } else {
+                return word.slice(0, (6 - ln));
+            }
+        }
+
+        function getContrastYIQ (hexcolor) {
+            var r = parseInt(hexcolor.substr(0,2),16),
+                g = parseInt(hexcolor.substr(2,2),16),
+                b = parseInt(hexcolor.substr(4,2),16),
+                yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
+        function update (e) {
+            var hex, colour = input[0].value.toLowerCase();
+            colour = shorten(colour);
+
+            // split on multiple lines for ease of readabiity
+            colour = colour.replace(/[ijl]/g, 1).replace(/[ruv]/g, 2).replace(/[kmw]/g, 3);
+            colour = colour.replace(/[hn]/g, 4).replace(/[sz]/g, 5).replace(/[pq]/g, 6);
+            colour = colour.replace(/[t]/g, 7).replace(/[x]/g, 8).replace(/[gy]/g, 9).replace(/[o]/g, 0);
+            
+            hex = '#' + colour;
+            main[0].style.backgroundColor = hex;
+            main[0].style.color = getContrastYIQ(colour);
+            output[0].innerText = hex;
+            output[0].innerContent = hex;
+        }
+
+        input[0].addEventListener('keyup', update);
+
+    </script>
+</body>
+</html>
