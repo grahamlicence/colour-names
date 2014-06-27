@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-gb">
 <head>
-    <title>Names in CSS hex</title>
+    <title>Words as CSS HEX colours</title>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="Convert words to a CSS HEX colour value"/>
 
     <style type="text/css">
         * {box-sizing: border-box;}
@@ -14,10 +15,28 @@
             height: 100%;
         }
         main {
-            background: #affec7;
+            background: #92a4a3;
             transition: background 0.5s;
             padding: 1em;
             height: 100%;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -moz-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+        .content {
+            text-align: center;
         }
         input {
             padding: 10px;
@@ -28,6 +47,7 @@
             font-size:16px;
         }
         .your-colour {
+            display: inline-block;
             font-family: monospace;
             margin: 0 0 1em;
         } 
@@ -35,17 +55,20 @@
             font-family: monospace;
             background: rgba(255, 255, 255, 0.5);
             padding: 0.1em 0.5em 0.1em;
+            max-width: 50em;
+            text-align: left;
         }
         /* GitHub banner */
         .footnote {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
             bottom: 0;
             color: #000;
             font-family: Arial;
             font-size: 1.2rem;
             left: 0;
             line-height: 1.3;
-            margin: 0 0 0.3rem;
+            margin: 0;
+            padding: 0.1em;
             position: fixed;
             text-align: center;
             width: 100%;
@@ -73,15 +96,17 @@
 <body>
 
     <main>
-        <p class="your-colour">Your colour: <span>#affec7</span></p>
-        <input type="text" />
+        <div class="content">
+            <input type="text" />
+            <p class="your-colour">Your colour: <span>#92a4a3</span></p>
 
-        <section class="about">
-            <h1>Colour names</h1>
-            <p>Type your name into the above box to give your name as a hex colour value.</p>
-            <p>Three and six character names work best (for obvious reasons), with other lengths shorterned or having no #affec7.</p>
-            <p>And yes, colour is a correct spelling.</p>
-        </section>
+            <section class="about">
+                <h1>Colour names</h1>
+                <p>Type your name into the above box to give your name as a hex colour value (or any other word).</p>
+                <p>Three and six character names work best (for obvious reasons), with other lengths shorterned or having no #affec7.</p>
+                <p>And yes, colour is a correct spelling.</p>
+            </section>
+        </div>
     </main>
 
     <p class="footnote">Experiment by Graham Licence. <a href="https://github.com/grahamlicence/colour-names" class="github">Fork me on GitHub</a></p>
@@ -89,7 +114,8 @@
     <script>
         var input = document.querySelectorAll('input'),
             main = document.querySelectorAll('main'),
-            output = document.querySelectorAll('span');
+            output = document.querySelectorAll('span'),
+            yourColour = document.querySelectorAll('.your-colour');
 
         // check if word is 3 or 6 letters
         function checkLength (word) {
@@ -101,25 +127,28 @@
 
         // returns a 3 or 6 letter length word
         function shorten (word) {
-            var ln;
+            var ln = word.length;
+            // return default if 1 or 2 characters
+            if (ln < 3) {
+                return '92a4a3';
+            }
+            // check if the length is 3 or 6 characters long, otherwise continue
             if (checkLength(word)) {
                 return word;
-            } 
+            }
             // remove not so translatable letters, eg r for 2, ll for l
             word = word.replace('ll', 'l').replace('r', '');
             if (checkLength(word)) {
                 return word;
             }
-            // and again why not
+            // check for other letters
             word = word.replace('u', '');
             if (checkLength(word)) {
                 return word;
             }
-            // otherwise trim the last letters
+            // still too long, trim the last letters
             ln = word.length;
-            if (ln < 3) {
-                return 'affec7';
-            } else if (ln < 6) {
+            if (ln < 6) {
                 return word.slice(0, (3 - ln));
             } else {
                 return word.slice(0, (6 - ln));
@@ -127,6 +156,10 @@
         }
 
         function getContrastYIQ (hexcolor) {
+            if (hexcolor.length === 3) {
+                hexcolor += hexcolor;
+            }
+            // http://24ways.org/2010/calculating-color-contrast/
             var r = parseInt(hexcolor.substr(0,2),16),
                 g = parseInt(hexcolor.substr(2,2),16),
                 b = parseInt(hexcolor.substr(4,2),16),
@@ -145,12 +178,13 @@
             
             hex = '#' + colour;
             main[0].style.backgroundColor = hex;
-            main[0].style.color = getContrastYIQ(colour);
+            yourColour[0].style.color = getContrastYIQ(colour);
             output[0].innerText = hex;
             output[0].innerContent = hex;
         }
 
         input[0].addEventListener('keyup', update);
+        input[0].focus();
 
     </script>
 </body>
